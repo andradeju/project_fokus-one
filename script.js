@@ -10,12 +10,15 @@ const musicaFocoInput = document.querySelector('#alternar-musica')
 const musica = new Audio('/sons/luna-rise-part-one.mp3') 
 musica.loop = true 
 const inicioPauseBtn = document.querySelector('#start-pause')
-const somIniciar = new Audio('./sons/play.wav');
-const somPausar = new Audio('./sons/pause.mp3');
-const somTimeOver = new Audio('./sons/beep.mp3');
+const iniciarPausarBtn = document.querySelector('#start-pause span')
+const somIniciar = new Audio('./sons/play.wav')
+const somPausar = new Audio('./sons/pause.mp3')
+const somTimeOver = new Audio('./sons/beep.mp3')
+const imgInicioPause = document.querySelector('.app__card-primary-butto-icon');
+const tempoTela = document.querySelector('#timer')
 
 
-let tempoDecorridoSeg = 5;
+let tempoDecorridoSeg = 1500
 let intervaloId = null;
 
 
@@ -28,21 +31,25 @@ musicaFocoInput.addEventListener('change', () => {
 })
 
 focoBtn.addEventListener('click', () => {
+  tempoDecorridoSeg = 1500
   alterarContexto('foco')
   focoBtn.classList.add('active')
 })
 
 curtoBtn.addEventListener('click', () => {
+  tempoDecorridoSeg = 300
   alterarContexto('descanso-curto')
   curtoBtn.classList.add('active')
 })
 
 longoBtn.addEventListener('click', () => {
+  tempoDecorridoSeg = 900
   alterarContexto('descanso-longo')
   longoBtn.classList.add('active')
 })
 
 function alterarContexto(contexto) {
+  mostrarTempo()
   botoes.forEach(function (contexto){
     contexto.classList.remove('active')
   })
@@ -74,7 +81,7 @@ const contagemRegressiva = () => {
     return
   }
   tempoDecorridoSeg -= 1
-  console.log('Temporizador: ' + tempoDecorridoSeg);
+  mostrarTempo()
 }
 
 inicioPauseBtn.addEventListener('click', iniciarOuPausar)
@@ -87,10 +94,21 @@ function iniciarOuPausar() {
   }
   somIniciar.play()  
   intervaloId = setInterval(contagemRegressiva, 1000)
+  iniciarPausarBtn.textContent = "Pausar"
+  imgInicioPause.setAttribute('src','./imagens/pause.png')
 }
 
 function zerar() {
   clearInterval(intervaloId)
-
+  iniciarPausarBtn.textContent = "Começar"
+  imgInicioPause.setAttribute('src', './imagens/play_arrow.png')
   intervaloId = null;
 }
+
+function mostrarTempo() {
+  const tempo = new Date(tempoDecorridoSeg  * 1000)
+  const tempoFormatado = tempo.toLocaleTimeString('pt-Br', {minute:'2-digit', second:'2-digit'})
+  tempoTela.innerHTML =  `${tempoFormatado}`
+}
+
+mostrarTempo()
